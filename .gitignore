@@ -43,6 +43,8 @@ captures/
 .idea/gradle.xml
 .idea/dictionaries
 .idea/libraries
+.idea/vcs.xml
+.idea/modules.xml
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
@@ -115,8 +117,8 @@ fabric.properties
 # Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
 
 # *.iml
-# modules.xml
-# .idea/misc.xml
+modules.xml
+.idea/misc.xml
 # *.ipr
 
 # Sonarlint plugin
