@@ -7,6 +7,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
+import java.io.IOException;
 import org.json.JSONObject;
 import xyz.gonzapico.kc_networking.VolleyHandler;
 
@@ -43,7 +46,17 @@ public class GithubUserPresenter {
           @Override
           public void onResponse(JSONObject response) {
             Log.d(TAG, response.toString());
-            
+            Moshi moshi = new Moshi.Builder().build();
+            JsonAdapter<GithubUserModel> jsonAdapter = moshi.adapter(GithubUserModel.class);
+
+            GithubUserModel githubUserModel = null;
+            try {
+              githubUserModel = jsonAdapter.fromJson(response.toString());
+              mGithubUserView.renderUsername(githubUserModel.getName());
+              mGithubUserView.renderBio(githubUserModel.getBio());
+            } catch (IOException error) {
+              Log.e(TAG, error.getMessage());
+            }
           }
         }, new Response.ErrorListener() {
 
