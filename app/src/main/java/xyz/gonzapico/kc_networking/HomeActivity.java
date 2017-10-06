@@ -17,17 +17,19 @@ public class HomeActivity extends AppCompatActivity implements GithubUserView {
     setContentView(R.layout.activity_home);
 
     bindViews();
+
     setUpPresenter();
+
   }
 
   private void setUpPresenter() {
     mGithubPresenter = new GithubUserPresenter();
   }
 
-  @Override protected void onStart() {
-    super.onStart();
-
+  @Override protected void onResume() {
+    super.onResume();
     mGithubPresenter.attachView(this);
+    mGithubPresenter.getGithubUser();
   }
 
   @Override protected void onDestroy() {
