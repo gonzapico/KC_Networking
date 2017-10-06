@@ -3,17 +3,37 @@ package xyz.gonzapico.kc_networking;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import xyz.gonzapico.kc_networking.getGithubUser.GithubUserPresenter;
 import xyz.gonzapico.kc_networking.getGithubUser.GithubUserView;
 
 public class HomeActivity extends AppCompatActivity implements GithubUserView {
 
-  TextView tvGithubUsername, tvGithubBio;
+  private TextView tvGithubUsername, tvGithubBio;
+  private GithubUserPresenter mGithubPresenter;
+
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_home);
 
     bindViews();
+    setUpPresenter();
+  }
+
+  private void setUpPresenter() {
+    mGithubPresenter = new GithubUserPresenter();
+  }
+
+  @Override protected void onStart() {
+    super.onStart();
+
+    mGithubPresenter.attachView(this);
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+
+    mGithubPresenter.detachView();
   }
 
   @Override public void renderBio(String bio) {
