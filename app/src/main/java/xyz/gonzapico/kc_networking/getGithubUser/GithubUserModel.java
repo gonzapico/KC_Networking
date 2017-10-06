@@ -1,11 +1,13 @@
 
 package xyz.gonzapico.kc_networking.getGithubUser;
 
+import com.squareup.moshi.Json;
 
 public class GithubUserModel {
 
     private String login;
     private Integer id;
+    @Json(name = "avatar_url")
     private String avatarUrl;
     private String gravatarId;
     private String url;

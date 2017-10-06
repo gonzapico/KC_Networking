@@ -1,11 +1,14 @@
 package xyz.gonzapico.kc_networking.getGithubUser;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.ImageView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -23,12 +26,14 @@ public class GithubUserPresenter {
   private final static String TAG = GithubUserPresenter.class.getSimpleName();
 
   private GithubUserView mGithubUserView;
+  private VolleyHandler mVolleyHandlerInstance;
 
   public GithubUserPresenter(){
 
   }
 
   public void attachView(GithubUserView githubUserView){
+    mVolleyHandlerInstance = VolleyHandler.getInstance((HomeActivity)githubUserView);
     mGithubUserView = githubUserView;
   }
 
@@ -56,6 +61,7 @@ public class GithubUserPresenter {
               githubUserModel = jsonAdapter.fromJson(response.toString());
               mGithubUserView.renderUsername(githubUserModel.getName());
               mGithubUserView.renderBio(githubUserModel.getBio());
+              getGithubImage(githubUserModel.getAvatarUrl());
             } catch (IOException error) {
               Log.e(TAG, error.getMessage());
             }
@@ -69,5 +75,52 @@ public class GithubUserPresenter {
     });
 
     VolleyHandler.getInstance((Context)mGithubUserView).addToRequestQueue(githubUserRequest, TAG);
+  }
+
+  /***
+   * Use case
+   *
+   * Version 1.- with Image Loader inside Singleton
+   */
+  public void getGithubImageWithCache(String urlImage){
+    ImageLoader imageLoader = mVolleyHandlerInstance.getImageLoader();
+    imageLoader.get(urlImage, new ImageLoader.ImageListener() {
+      @Override
+      public void onErrorResponse(VolleyError error) {
+        Log.e(TAG, "Image Load Error: " + error.getMessage());
+      }
+
+      @Override
+      public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+        Bitmap bitmap = response.getBitmap();
+        if (bitmap != null) {
+          mGithubUserView.renderImage(bitmap);
+        }
+      }
+    });
+  }
+
+  /***
+   * Use case
+   *
+   * Version 2.- with Image Request
+   */
+  public void getGithubImage(String urlImage){
+    ImageRequest request = new ImageRequest(urlImage,
+        new Response.Listener<Bitmap>() {
+          @Override
+          public void onResponse(Bitmap bitmap) {
+            if (bitmap != null) {
+              mGithubUserView.renderImage(bitmap);
+            }
+          }
+        }, 0, 0, ImageView.ScaleType.CENTER_CROP, Bitmap.Config.ARGB_8888,
+        new Response.ErrorListener() {
+          public void onErrorResponse(VolleyError error) {
+            Log.e(TAG, "Image Load Error: " + error.getMessage());
+          }
+        });
+
+    VolleyHandler.getInstance((HomeActivity)mGithubUserView).addToRequestQueue(request);
   }
 }
