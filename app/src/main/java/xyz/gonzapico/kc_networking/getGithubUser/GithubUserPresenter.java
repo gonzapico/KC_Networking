@@ -11,6 +11,7 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import java.io.IOException;
 import org.json.JSONObject;
+import xyz.gonzapico.kc_networking.HomeActivity;
 import xyz.gonzapico.kc_networking.VolleyHandler;
 
 /**
@@ -32,6 +33,7 @@ public class GithubUserPresenter {
   }
 
   public void detachView(){
+    VolleyHandler.getInstance((HomeActivity)mGithubUserView).cancelPendingRequests(TAG);
     mGithubUserView = null;
   }
 
@@ -66,6 +68,6 @@ public class GithubUserPresenter {
       }
     });
 
-    VolleyHandler.getInstance((Context)mGithubUserView).addToRequestQueue(githubUserRequest);
+    VolleyHandler.getInstance((Context)mGithubUserView).addToRequestQueue(githubUserRequest, TAG);
   }
 }
