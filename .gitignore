@@ -78,6 +78,8 @@ gen-external-apklibs
 # Gradle:
 .idea/**/gradle.xml
 .idea/**/libraries
+.idea/misc.xml
+.idea/vcs.xml
 
 # CMake
 cmake-build-debug/
